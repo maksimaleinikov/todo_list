@@ -53,6 +53,9 @@ body {
   border-radius: var(--size);
   cursor: pointer;
 }
+.todo_list {
+  margin-top: 32px;
+}
 .todo_list > *:not(:last-child) {
   margin-bottom: 8px;
 }
