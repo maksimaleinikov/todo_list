@@ -1,3 +1,4 @@
+localStorage.setItem("positioncount", 0);
 const dom = {
   new: document.getElementById("new"),
   add: document.getElementById("add"),
@@ -19,11 +20,14 @@ dom.add.onclick = () => {
 function addTask(text, list) {
   const timestamp = Date.now();
   const task = {
+    position: Number(localStorage.getItem("positioncount")),
     id: timestamp,
     text: text, //можно просто text когда совпадают названия поле/значение
     isComplete: false,
   };
   list.push(task);
+  task.position = task.position + 1;
+  localStorage.setItem("positioncount", task.position);
 }
 //проверка существования задачи в задачах
 function isNotHaveTask(text, list) {
@@ -39,12 +43,12 @@ function isNotHaveTask(text, list) {
 //функция вывода списка задач
 function tasksRender(list) {
   let htmllist = "";
-
   list.forEach((task) => {
     const cls = task.isComplete ? "todo_task todo_task_completed" : "todo_task";
     const checked = task.isComplete ? "checked" : "";
     const taskHtml = `
     <div id = "${task.id}"class="${cls}">
+    <div class='todo_position'>${task.position}</div>
           <label class="todo_checkbox">
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
@@ -55,8 +59,10 @@ function tasksRender(list) {
     htmllist = htmllist + taskHtml;
   });
   dom.tasks.innerHTML = htmllist;
+
   renderTasksCount(list);
 }
+
 //отслеживаем клик по чекбоксу задачи
 dom.tasks.onclick = (event) => {
   const target = event.target;
