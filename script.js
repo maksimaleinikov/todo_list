@@ -19,15 +19,15 @@ dom.add.onclick = () => {
 //функция добавления задачек
 function addTask(text, list) {
   const timestamp = Date.now();
+  let positionNum = Number(localStorage.getItem("positioncount"));
   const task = {
-    position: Number(localStorage.getItem("positioncount")),
+    position: positionNum,
     id: timestamp,
     text: text, //можно просто text когда совпадают названия поле/значение
     isComplete: false,
   };
   list.push(task);
-  task.position = task.position + 1;
-  localStorage.setItem("positioncount", task.position);
+  localStorage.setItem("positioncount", positionNum + 1);
 }
 //проверка существования задачи в задачах
 function isNotHaveTask(text, list) {
@@ -48,7 +48,7 @@ function tasksRender(list) {
     const checked = task.isComplete ? "checked" : "";
     const taskHtml = `
     <div id = "${task.id}"class="${cls}">
-    <div class='todo_position'>${task.position}</div>
+    <div class='todo_position'>${task.position + 1}</div>
           <label class="todo_checkbox">
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
@@ -100,6 +100,8 @@ function deleteTask(id, list) {
       list.splice(idx, 1);
     }
   });
+  let positionNumDel = Number(localStorage.getItem("positioncount"));
+  localStorage.setItem("positioncount", positionNumDel - 1);
 }
 
 //вывод кол-ва задач
