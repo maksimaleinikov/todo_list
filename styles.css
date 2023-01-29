@@ -75,6 +75,7 @@ body {
 }
 .todo_checkbox {
   margin-right: 16px;
+  margin-left: 15px;
 }
 .todo_checkbox input {
   display: none;
@@ -107,6 +108,7 @@ body {
 }
 .todo_task-text {
   font-size: 20px;
+  margin-left: 20px;
 }
 .todo_task-del {
   display: none;
@@ -114,4 +116,28 @@ body {
   margin-right: 0;
   line-height: calc(var(--size) * 0.88);
   font-size: 44px;
+}
+.todo_tasks-count {
+  margin-top: 30px;
+}
+.todo_position {
+  margin-right: 10px;
+  margin-left: 5px;
+}
+.tasks-header {
+  display: flex;
+  height: 26px;
+  width: 100%;
+  align-items: center;
+}
+.pos {
+  margin-left: 4px;
+}
+.status {
+  margin-left: 10px;
+}
+.description {
+  margin-left: 5px;
+  text-align: center;
+  width: 1000px;
 }
