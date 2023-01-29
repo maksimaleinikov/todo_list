@@ -21,7 +21,7 @@ body {
 }
 * {
   margin: 0;
-  box-sizing: border-box; ///убрали скролл
+  box-sizing: border-box;
 }
 .todo_content {
 }
@@ -140,4 +140,7 @@ body {
   margin-left: 5px;
   text-align: center;
   width: 1000px;
+}
+.data {
+  margin-left: 20px;
 }
