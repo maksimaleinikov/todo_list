@@ -19,10 +19,10 @@ dom.add.onclick = () => {
 //функция добавления задачек
 function addTask(text, list) {
   const data = new Date();
-  let month = 8;
-  month > 9 ? month : ".0" + month;
+  // let month = 8;
+  // month > 9 ? month : ".0" + month;
   const timestamp =
-    data.getDate() + "." + (month + 1) + "." + data.getFullYear();
+    data.getDate() + "." + (data.getMonth() + 1) + "." + data.getFullYear();
   let positionNum = Number(localStorage.getItem("positioncount"));
   const task = {
     timestamp: timestamp,
