@@ -1,4 +1,4 @@
-localStorage.setItem("positioncount", 0);
+localStorage.setItem("positioncount", 1);
 const dom = {
   new: document.getElementById("new"),
   add: document.getElementById("add"),
@@ -48,7 +48,7 @@ function tasksRender(list) {
     const checked = task.isComplete ? "checked" : "";
     const taskHtml = `
     <div id = "${task.id}"class="${cls}">
-    <div class='todo_position'>${task.position + 1}</div>
+    <div class='todo_position'>${task.position}</div>
           <label class="todo_checkbox">
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
@@ -100,8 +100,6 @@ function deleteTask(id, list) {
       list.splice(idx, 1);
     }
   });
-  let positionNumDel = Number(localStorage.getItem("positioncount"));
-  localStorage.setItem("positioncount", positionNumDel - 1);
 }
 
 //вывод кол-ва задач
