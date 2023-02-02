@@ -19,14 +19,14 @@ dom.add.onclick = () => {
 //функция добавления задачек
 function addTask(text, list) {
   const data = new Date();
+
   const timestamp =
     data.getDate() + "." + (data.getMonth() + 1) + "." + data.getFullYear();
   let positionNum = Number(localStorage.getItem("positioncount"));
   const task = {
     timestamp: timestamp,
     position: positionNum,
-    id: timestamp,
-    text: text, //можно просто text когда совпадают названия поле/значение
+    text: text,
     isComplete: false,
   };
   list.push(task);
@@ -50,13 +50,13 @@ function tasksRender(list) {
     const cls = task.isComplete ? "todo_task todo_task_completed" : "todo_task";
     const checked = task.isComplete ? "checked" : "";
     const taskHtml = `
-    <div id = "${task.id}"class="${cls}">
+    <div id = "${task.position}"class="${cls}">
     <div class='todo_position'>${task.position}</div>
           <label class="todo_checkbox">
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
           </label>
-          <div class ="todo_data">${task.timestamp}</div>
+          <div class ='todo_data'>${task.timestamp}</div>
           <div class="todo_task-text">${task.text}</div>
           <div class="todo_task-del">-</div>
     </div>`;
@@ -90,17 +90,16 @@ dom.tasks.onclick = (event) => {
 
 function changeTaskStatus(id, list) {
   list.forEach((task) => {
-    if (task.id == id) {
+    if (task.position === id) {
       task.isComplete = !task.isComplete;
     }
-    //нестрогое потому что в id строка, а в массиве число
   });
 }
 
 //функция удаления задачи
 function deleteTask(id, list) {
   list.forEach((task, idx) => {
-    if (task.id == id) {
+    if (task.position === id) {
       list.splice(idx, 1);
     }
   });
