@@ -75,13 +75,13 @@ dom.tasks.onclick = (event) => {
 
   if (isCheckboxEl) {
     const task = target.parentElement.parentElement;
-    const taskId = task.getAttribute("id");
+    const taskId = Number(task.getAttribute("id"));
     changeTaskStatus(taskId, tasks);
     tasksRender(tasks);
   }
   if (isDeleteEl) {
     const task = target.parentElement;
-    const taskId = task.getAttribute("id");
+    const taskId = Number(task.getAttribute("id"));
     deleteTask(taskId, tasks);
     tasksRender(tasks);
   }
