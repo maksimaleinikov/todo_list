@@ -50,7 +50,7 @@ function tasksRender(list) {
     const cls = task.isComplete ? "todo_task todo_task_completed" : "todo_task";
     const checked = task.isComplete ? "checked" : "";
     const taskHtml = `
-    <div id = "${task.position}"class="${cls}">
+    <div id ="${task.position}" class="${cls}">
     <div class='todo_position'>${task.position}</div>
           <label class="todo_checkbox">
             <input type="checkbox" ${checked}/>
@@ -75,7 +75,7 @@ dom.tasks.onclick = (event) => {
 
   if (isCheckboxEl) {
     const task = target.parentElement.parentElement;
-    const taskId = task.getAttribute("id"); // task.position?
+    const taskId = task.getAttribute("id");
     changeTaskStatus(taskId, tasks);
     tasksRender(tasks);
   }
