@@ -75,7 +75,7 @@ dom.tasks.onclick = (event) => {
 
   if (isCheckboxEl) {
     const task = target.parentElement.parentElement;
-    const taskId = task.getAttribute("id");
+    const taskId = task.getAttribute("id"); // task.position?
     changeTaskStatus(taskId, tasks);
     tasksRender(tasks);
   }
