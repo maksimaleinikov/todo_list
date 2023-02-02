@@ -19,8 +19,6 @@ dom.add.onclick = () => {
 //функция добавления задачек
 function addTask(text, list) {
   const data = new Date();
-  // let month = 8;
-  // month > 9 ? month : ".0" + month;
   const timestamp =
     data.getDate() + "." + (data.getMonth() + 1) + "." + data.getFullYear();
   let positionNum = Number(localStorage.getItem("positioncount"));
@@ -58,7 +56,7 @@ function tasksRender(list) {
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
           </label>
-          <div class = 'todo_data'>${task.timestamp}</div>
+          <div class ="todo_data">${task.timestamp}</div>
           <div class="todo_task-text">${task.text}</div>
           <div class="todo_task-del">-</div>
     </div>`;
