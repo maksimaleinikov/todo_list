@@ -4,6 +4,10 @@ const dom = {
   add: document.getElementById("add"),
   tasks: document.getElementById("tasks"),
   count: document.getElementById("count"),
+  pos: document.getElementsByClassName("pos"),
+  status: document.getElementsByClassName("status"),
+  data: document.getElementsByClassName("data"),
+  description: document.getElementsByClassName("descripton"),
 };
 //массив задач
 const tasks = [];
@@ -96,6 +100,11 @@ dom.tasks.onclick = (event) => {
     tasksRender(tasks);
   }
 };
+//отслеживаем клик по #
+dom.count.addEventListener(click, say);
+function say() {
+  alert("qwe");
+}
 //функция изменения статуса задачи
 
 function changeTaskStatus(id, list) {
@@ -118,4 +127,10 @@ function deleteTask(id, list) {
 //вывод кол-ва задач
 function renderTasksCount(list) {
   dom.count.innerHTML = list.length;
+}
+//сортировка задач по порядковому номеру
+function sortTasks(tasks) {
+  tasks.sort(function (a, b) {
+    return a.position - b.position;
+  });
 }

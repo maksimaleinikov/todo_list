@@ -125,11 +125,12 @@ body {
   margin-right: 10px;
   margin-left: 5px;
 }
-.tasks-header {
+#tasks-header {
   display: flex;
   height: 26px;
   width: 100%;
   align-items: center;
+  cursor: pointer;
 }
 .pos {
   margin-left: 4px;
