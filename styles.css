@@ -70,9 +70,7 @@ body {
   text-decoration: line-through;
   color: var(--default);
 }
-.todo_data {
-  text-decoration: line-through;
-}
+
 .todo_task:hover .todo_task-del {
   display: block;
 }

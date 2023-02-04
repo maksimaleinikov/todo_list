@@ -19,9 +19,19 @@ dom.add.onclick = () => {
 //функция добавления задачек
 function addTask(text, list) {
   const data = new Date();
-
+  function addZero(num) {
+    if (num >= 0 && num <= 9) {
+      return "0" + num;
+    } else {
+      return num;
+    }
+  }
   const timestamp =
-    data.getDate() + "." + (data.getMonth() + 1) + "." + data.getFullYear();
+    addZero(data.getDate()) +
+    "." +
+    addZero(data.getMonth() + 1) +
+    "." +
+    addZero(data.getFullYear());
   let positionNum = Number(localStorage.getItem("positioncount"));
   const task = {
     timestamp: timestamp,
