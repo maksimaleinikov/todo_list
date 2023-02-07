@@ -4,10 +4,10 @@ const dom = {
   add: document.getElementById("add"),
   tasks: document.getElementById("tasks"),
   count: document.getElementById("count"),
-  pos: document.getElementsByClassName("pos"),
-  status: document.getElementsByClassName("status"),
-  data: document.getElementsByClassName("data"),
-  description: document.getElementsByClassName("descripton"),
+  pos: document.getElementById("pos"),
+  status: document.getElementById("status"),
+  data: document.getElementById("data"),
+  description: document.getElementById("descripton"),
 };
 //массив задач
 const tasks = [];
@@ -86,7 +86,6 @@ dom.tasks.onclick = (event) => {
   const target = event.target;
   const isCheckboxEl = target.classList.contains("todo_checkbox-div");
   const isDeleteEl = target.classList.contains("todo_task-del");
-
   if (isCheckboxEl) {
     const task = target.parentElement.parentElement;
     const taskId = Number(task.getAttribute("id"));
@@ -100,11 +99,7 @@ dom.tasks.onclick = (event) => {
     tasksRender(tasks);
   }
 };
-//отслеживаем клик по #
-dom.count.addEventListener(click, say);
-function say() {
-  alert("qwe");
-}
+dom.pos.click = sortAny(tasks);
 //функция изменения статуса задачи
 
 function changeTaskStatus(id, list) {
@@ -128,9 +123,9 @@ function deleteTask(id, list) {
 function renderTasksCount(list) {
   dom.count.innerHTML = list.length;
 }
+
 //сортировка задач по порядковому номеру
-function sortTasks(tasks) {
-  tasks.sort(function (a, b) {
-    return a.position - b.position;
-  });
+function sortAny(tasks) {
+  // tasks.position.sort(function (a, b) {
+  //   return a.position - b.position;
 }

@@ -38,7 +38,7 @@ body {
   padding: 8px 16px;
   height: var(--size);
   border: 1px solid var(--default);
-  flex-grow: 1; // чтобы занимал всю ширину, растянули
+  flex-grow: 1;
 }
 .todo_add,
 .todo_task-del {
@@ -132,17 +132,17 @@ body {
   align-items: center;
   cursor: pointer;
 }
-.pos {
+#pos {
   margin-left: 4px;
 }
-.status {
+#status {
   margin-left: 10px;
 }
-.description {
+#description {
   margin-left: 5px;
   text-align: center;
   width: 1000px;
 }
-.data {
+#data {
   margin-left: 20px;
 }
