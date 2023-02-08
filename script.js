@@ -1,13 +1,18 @@
+const SORT_STATE = {
+  UP: "up",
+  DOWN: "down",
+};
+let sortState = SORT_STATE.UP;
 localStorage.setItem("positioncount", 1);
 const dom = {
   new: document.getElementById("new"),
   add: document.getElementById("add"),
   tasks: document.getElementById("tasks"),
   count: document.getElementById("count"),
-  pos: document.getElementById("pos"),
-  status: document.getElementById("status"),
-  data: document.getElementById("data"),
-  description: document.getElementById("descripton"),
+  pos: document.querySelector(".pos"),
+  status: document.querySelector(".status"),
+  data: document.querySelector(".data"),
+  description: document.querySelector(".descripton"),
 };
 //массив задач
 const tasks = [];
@@ -17,7 +22,7 @@ dom.add.onclick = () => {
   if (newTaskText && isNotHaveTask(newTaskText, tasks)) {
     addTask(newTaskText, tasks);
     dom.new.value = "";
-    tasksRender(tasks);
+    render(tasks);
   }
 };
 //функция добавления задачек
@@ -57,6 +62,11 @@ function isNotHaveTask(text, list) {
   });
   return isNotHave;
 }
+//функция-отрисовки общая
+function render(list) {
+  tasksRender(list);
+  renderTasksCount(list);
+}
 //функция вывода списка задач
 function tasksRender(list) {
   let htmllist = "";
@@ -77,8 +87,6 @@ function tasksRender(list) {
     htmllist = htmllist + taskHtml;
   });
   dom.tasks.innerHTML = htmllist;
-
-  renderTasksCount(list);
 }
 
 //отслеживаем клик по чекбоксу задачи
@@ -90,16 +98,18 @@ dom.tasks.onclick = (event) => {
     const task = target.parentElement.parentElement;
     const taskId = Number(task.getAttribute("id"));
     changeTaskStatus(taskId, tasks);
-    tasksRender(tasks);
+    render(tasks);
   }
   if (isDeleteEl) {
     const task = target.parentElement;
     const taskId = Number(task.getAttribute("id"));
     deleteTask(taskId, tasks);
-    tasksRender(tasks);
+    render(tasks);
   }
 };
-dom.pos.click = sortAny(tasks);
+dom.pos.onclick = () => {
+  sortByPosition(tasks);
+};
 //функция изменения статуса задачи
 
 function changeTaskStatus(id, list) {
@@ -125,7 +135,20 @@ function renderTasksCount(list) {
 }
 
 //сортировка задач по порядковому номеру
-function sortAny(tasks) {
-  // tasks.position.sort(function (a, b) {
-  //   return a.position - b.position;
+function sortByPosition(tasks) {
+  if (tasks.length <= 1) return; //защита от бесполезного вызова
+  const newTasks = [...tasks];
+  newTasks.sort(function (a, b) {
+    return sortState === SORT_STATE.UP
+      ? a.position - b.position
+      : b.position - a.position;
+  });
+  tasksRender(newTasks);
+  sortState === SORT_STATE.UP
+    ? (sortState = SORT_STATE.DOWN)
+    : (sortState = SORT_STATE.UP);
+}
+//сортировка задач по дате
+function sortByData(tasks) {
+  if (tasks.length <= 1) return;
 }

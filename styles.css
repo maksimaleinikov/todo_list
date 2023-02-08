@@ -132,17 +132,17 @@ body {
   align-items: center;
   cursor: pointer;
 }
-#pos {
+.pos {
   margin-left: 4px;
 }
-#status {
+.status {
   margin-left: 10px;
 }
-#description {
+.description {
   margin-left: 5px;
   text-align: center;
   width: 1000px;
 }
-#data {
+.data {
   margin-left: 20px;
 }
