@@ -27,27 +27,15 @@ dom.add.onclick = () => {
 };
 //функция добавления задачек
 function addTask(text, list) {
-  const data = new Date();
-  function addZero(num) {
-    if (num >= 0 && num <= 9) {
-      return "0" + num;
-    } else {
-      return num;
-    }
-  }
-  const timestamp =
-    addZero(data.getDate()) +
-    "." +
-    addZero(data.getMonth() + 1) +
-    "." +
-    addZero(data.getFullYear());
   let positionNum = Number(localStorage.getItem("positioncount"));
   const task = {
-    timestamp: timestamp,
+    date: Date.now(),
+    //timestamp: timestamp,
     position: positionNum,
     text: text,
     isComplete: false,
   };
+
   list.push(task);
   localStorage.setItem("positioncount", positionNum + 1);
 }
@@ -80,7 +68,13 @@ function tasksRender(list) {
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
           </label>
-          <div class ='todo_data'>${task.timestamp}</div>
+          <div class ='todo_data'>${
+            new Date(task.date).getDate() +
+            "." +
+            (new Date(task.date).getMonth() + 1) +
+            "." +
+            new Date(task.date).getFullYear()
+          }</div>
           <div class="todo_task-text">${task.text}</div>
           <div class="todo_task-del">-</div>
     </div>`;
@@ -109,6 +103,9 @@ dom.tasks.onclick = (event) => {
 };
 dom.pos.onclick = () => {
   sortByPosition(tasks);
+};
+dom.data.onclick = () => {
+  sortByData(tasks);
 };
 //функция изменения статуса задачи
 
@@ -150,5 +147,13 @@ function sortByPosition(tasks) {
 }
 //сортировка задач по дате
 function sortByData(tasks) {
-  if (tasks.length <= 1) return;
+  //if (tasks.length <= 1) return;
+  const newTasks = [...tasks];
+  newTasks.sort(function (a, b) {
+    return sortState === SORT_STATE.UP ? a.date - b.date : b.date - a.date;
+  });
+  tasksRender(newTasks);
+  sortState === SORT_STATE.UP
+    ? (sortState = SORT_STATE.DOWN)
+    : (sortState = SORT_STATE.UP);
 }
