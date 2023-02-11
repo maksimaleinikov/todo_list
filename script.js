@@ -101,11 +101,17 @@ dom.tasks.onclick = (event) => {
     render(tasks);
   }
 };
+//сортировка по клику на #
 dom.pos.onclick = () => {
   sortByPosition(tasks);
 };
+//сортировка по клику на дату
 dom.data.onclick = () => {
   sortByData(tasks);
+};
+//сортировка по клику на описание
+dom.description.onclick = () => {
+  sortByText(tasks);
 };
 //функция изменения статуса задачи
 
@@ -147,10 +153,23 @@ function sortByPosition(tasks) {
 }
 //сортировка задач по дате
 function sortByData(tasks) {
-  //if (tasks.length <= 1) return;
+  if (tasks.length <= 1) return;
   const newTasks = [...tasks];
   newTasks.sort(function (a, b) {
     return sortState === SORT_STATE.UP ? a.date - b.date : b.date - a.date;
+  });
+  tasksRender(newTasks);
+  sortState === SORT_STATE.UP
+    ? (sortState = SORT_STATE.DOWN)
+    : (sortState = SORT_STATE.UP);
+}
+//сортировка задач по тексту
+function sortByText(tasks) {
+  const newTasks = [...tasks];
+  newTasks.sort(function (a, b) {
+    return sortState === SORT_STATE.UP
+      ? a.description - b.description
+      : b.description - a.description;
   });
   tasksRender(newTasks);
   sortState === SORT_STATE.UP
