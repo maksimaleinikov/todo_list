@@ -12,7 +12,11 @@ const dom = {
   pos: document.querySelector(".pos"),
   status: document.querySelector(".status"),
   data: document.querySelector(".data"),
-  description: document.querySelector(".descripton"),
+  description: document.querySelector(".description"),
+  start_date: document.querySelector("#start_date"),
+  end_date: document.querySelector("#end_date"),
+  filter_text: document.querySelector("#filter_text"),
+  filter_button: document.querySelector("#filter_button"),
 };
 //массив задач
 const tasks = [];
@@ -109,10 +113,7 @@ dom.pos.onclick = () => {
 dom.data.onclick = () => {
   sortByData(tasks);
 };
-//сортировка по клику на описание
-dom.description.onclick = () => {
-  sortByText(tasks);
-};
+
 //функция изменения статуса задачи
 
 function changeTaskStatus(id, list) {
@@ -163,16 +164,18 @@ function sortByData(tasks) {
     ? (sortState = SORT_STATE.DOWN)
     : (sortState = SORT_STATE.UP);
 }
-//сортировка задач по тексту
-function sortByText(tasks) {
+//функция фильтрации по тексту задач
+dom.filter_button.onclick = () => {
+  checkText(tasks);
+};
+
+function checkText(tasks) {
   const newTasks = [...tasks];
-  newTasks.sort(function (a, b) {
-    return sortState === SORT_STATE.UP
-      ? a.description - b.description
-      : b.description - a.description;
-  });
-  tasksRender(newTasks);
-  sortState === SORT_STATE.UP
-    ? (sortState = SORT_STATE.DOWN)
-    : (sortState = SORT_STATE.UP);
+  let sortedTasks = [];
+  newTasks.filter((text) =>
+    text.text.includes(dom.filter_text.value)
+      ? sortedTasks.push(text)
+      : tasksRender(tasks)
+  );
+  tasksRender(sortedTasks);
 }
