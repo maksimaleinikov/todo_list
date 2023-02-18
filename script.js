@@ -164,18 +164,25 @@ function sortByData(tasks) {
     ? (sortState = SORT_STATE.DOWN)
     : (sortState = SORT_STATE.UP);
 }
-//функция фильтрации по тексту задач
+//функция фильтрации
 dom.filter_button.onclick = () => {
-  checkText(tasks);
+  if (tasks.length <= 1) return;
+  const filterText = dom.filter_text.value;
+  let newTasks = [...tasks];
+  let startDate = Date.parse(dom.start_date.value);
+  let endDate = Date.parse(dom.end_date.value);
+  //условия для фильтрации добавить
+  newTasks = checkText(newTasks, filterText);
+  console.log(newTasks);
+  newTasks = dateFilter(newTasks, { startDate, endDate });
+  console.log(newTasks);
+  tasksRender(newTasks);
 };
-
-function checkText(tasks) {
-  const newTasks = [...tasks];
-  let sortedTasks = [];
-  newTasks.filter((text) =>
-    text.text.includes(dom.filter_text.value)
-      ? sortedTasks.push(text)
-      : tasksRender(tasks)
-  );
-  tasksRender(sortedTasks);
+//фильтрация по тексту задач
+function checkText(tasks, text) {
+  return tasks.filter((task) => task.text.includes(text));
+}
+//фильтрация по датам
+function dateFilter(tasks, { startDate, endDate }) {
+  return tasks.filter((task) => task.date >= startDate && task.date <= endDate);
 }
