@@ -85,6 +85,7 @@ function tasksRender(list) {
     htmllist = htmllist + taskHtml;
   });
   dom.tasks.innerHTML = htmllist;
+  saveInStorage(tasks);
 }
 
 //отслеживаем клик по чекбоксу задачи
@@ -166,14 +167,20 @@ function sortByData(tasks) {
 }
 //функция фильтрации
 dom.filter_button.onclick = () => {
-  if (tasks.length <= 1) return;
   const filterText = dom.filter_text.value;
   let newTasks = [...tasks];
   let startDate = Date.parse(dom.start_date.value);
-  let endDate = Date.parse(dom.end_date.value);
+  let endDate = Date.parse(dom.end_date.value) + 86400000; //проверка на конец дня
+  // if (
+  //   tasks.length <= 1 ||
+  //   filterText == null ||
+  //   startDate === NaN ||
+  //   endDate === NaN
+  // )
+  //   return; //
+
   //условия для фильтрации добавить
   newTasks = checkText(newTasks, filterText);
-  console.log(newTasks);
   newTasks = dateFilter(newTasks, { startDate, endDate });
   console.log(newTasks);
   tasksRender(newTasks);
@@ -185,4 +192,16 @@ function checkText(tasks, text) {
 //фильтрация по датам
 function dateFilter(tasks, { startDate, endDate }) {
   return tasks.filter((task) => task.date >= startDate && task.date <= endDate);
+  // return tasks.filter((task) => {
+  //       if (task.date >= startDate && task.date <= endDate) return task;
+  // });
 }
+//сохранение в LocalStorage
+function saveInStorage(tasks) {
+  let serialTasks = JSON.stringify(tasks);
+  localStorage.setItem("savedTasks", serialTasks);
+}
+function saveFilteredText() {
+  localStorage.setItem("filteredText", dom.filter_text.value);
+}
+dom.filter_text.addEventListener("change", saveFilteredText);
