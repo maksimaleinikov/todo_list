@@ -2,8 +2,14 @@ const SORT_STATE = {
   UP: "up",
   DOWN: "down",
 };
+
+const DAY_IN_MS = 86400000;
+const LOCAL_STORAGE_KEYS = {
+  SAVED_TASKS: "savedTasks",
+  FILTERED_TEXT: "filteredText",
+};
+
 let sortState = SORT_STATE.UP;
-localStorage.setItem("positioncount", 1);
 const dom = {
   new: document.getElementById("new"),
   add: document.getElementById("add"),
@@ -17,9 +23,23 @@ const dom = {
   end_date: document.querySelector("#end_date"),
   filter_text: document.querySelector("#filter_text"),
   filter_button: document.querySelector("#filter_button"),
+  refresh_button: document.querySelector("#refresh_button"),
 };
 //массив задач
 const tasks = [];
+
+(function startTasks() {
+  //localStorage.clear();
+  if (localStorage.length != 0) {
+    let returnObj = JSON.parse(localStorage.getItem("savedTasks"));
+    localStorage.setItem("positioncount", returnObj.length + 1);
+  }
+  let temp = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SAVED_TASKS));
+  if (temp !== null) tasks.push(...temp);
+
+  tasksRender(tasks);
+})();
+
 //отслеживаем клик по кнопке добавить задачу
 dom.add.onclick = () => {
   const newTaskText = dom.new.value;
@@ -27,6 +47,7 @@ dom.add.onclick = () => {
     addTask(newTaskText, tasks);
     dom.new.value = "";
     render(tasks);
+    saveInStorage(tasks);
   }
 };
 //функция добавления задачек
@@ -42,6 +63,15 @@ function addTask(text, list) {
 
   list.push(task);
   localStorage.setItem("positioncount", positionNum + 1);
+}
+//функция удаления задачи
+function deleteTask(id, list) {
+  list.forEach((task, idx) => {
+    if (task.position === id) {
+      list.splice(idx, 1);
+      console.log(idx);
+    }
+  });
 }
 //проверка существования задачи в задачах
 function isNotHaveTask(text, list) {
@@ -85,7 +115,6 @@ function tasksRender(list) {
     htmllist = htmllist + taskHtml;
   });
   dom.tasks.innerHTML = htmllist;
-  saveInStorage(tasks);
 }
 
 //отслеживаем клик по чекбоксу задачи
@@ -121,15 +150,6 @@ function changeTaskStatus(id, list) {
   list.forEach((task) => {
     if (task.position === id) {
       task.isComplete = !task.isComplete;
-    }
-  });
-}
-
-//функция удаления задачи
-function deleteTask(id, list) {
-  list.forEach((task, idx) => {
-    if (task.position === id) {
-      list.splice(idx, 1);
     }
   });
 }
@@ -170,19 +190,23 @@ dom.filter_button.onclick = () => {
   const filterText = dom.filter_text.value;
   let newTasks = [...tasks];
   let startDate = Date.parse(dom.start_date.value);
-  let endDate = Date.parse(dom.end_date.value) + 86400000; //проверка на конец дня
-  // if (
-  //   tasks.length <= 1 ||
-  //   filterText == null ||
-  //   startDate === NaN ||
-  //   endDate === NaN
-  // )
-  //   return; //
+  let endDate = Date.parse(dom.end_date.value) + DAY_IN_MS;
 
-  //условия для фильтрации добавить
-  newTasks = checkText(newTasks, filterText);
-  newTasks = dateFilter(newTasks, { startDate, endDate });
-  console.log(newTasks);
+  if (tasks.length <= 1) {
+    return tasksRender(newTasks);
+  }
+  if (filterText !== "") {
+    newTasks = checkText(newTasks, filterText);
+  }
+  if (startDate > endDate) {
+    let temp = startDate;
+    startDate = endDate;
+    endDate = temp;
+  }
+
+  if (!isNaN(startDate) || !isNaN(endDate)) {
+    newTasks = dateFilter(newTasks, { startDate, endDate });
+  }
   tasksRender(newTasks);
 };
 //фильтрация по тексту задач
@@ -191,17 +215,23 @@ function checkText(tasks, text) {
 }
 //фильтрация по датам
 function dateFilter(tasks, { startDate, endDate }) {
-  return tasks.filter((task) => task.date >= startDate && task.date <= endDate);
-  // return tasks.filter((task) => {
-  //       if (task.date >= startDate && task.date <= endDate) return task;
-  // });
+  return tasks.filter((task) => task.date > startDate && task.date < endDate);
 }
 //сохранение в LocalStorage
 function saveInStorage(tasks) {
   let serialTasks = JSON.stringify(tasks);
-  localStorage.setItem("savedTasks", serialTasks);
+  localStorage.setItem(LOCAL_STORAGE_KEYS.SAVED_TASKS, serialTasks);
 }
 function saveFilteredText() {
-  localStorage.setItem("filteredText", dom.filter_text.value);
+  localStorage.setItem(LOCAL_STORAGE_KEYS.FILTERED_TEXT, dom.filter_text.value);
 }
 dom.filter_text.addEventListener("change", saveFilteredText);
+dom.refresh_button.addEventListener("click", refreshFilters);
+
+function refreshFilters() {
+  //localStorage.clear();
+  dom.start_date.value = "";
+  dom.end_date.value = "";
+  dom.filter_text.value = "";
+  tasksRender(tasks);
+}
