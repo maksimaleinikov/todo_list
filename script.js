@@ -7,8 +7,10 @@ const DAY_IN_MS = 86400000;
 const LOCAL_STORAGE_KEYS = {
   SAVED_TASKS: "savedTasks",
   FILTERED_TEXT: "filteredText",
+  TOTAL_TASKS_CREATED: "totalTasksCreated",
 };
 
+let TASKS_IN_LS = 1;
 let sortState = SORT_STATE.UP;
 const dom = {
   new: document.getElementById("new"),
@@ -29,47 +31,42 @@ const dom = {
 const tasks = [];
 
 (function startTasks() {
-  //localStorage.clear();
-  if (localStorage.length != 0) {
-    let returnObj = JSON.parse(localStorage.getItem("savedTasks"));
-    localStorage.setItem("positioncount", returnObj.length + 1);
-  }
-  let temp = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SAVED_TASKS));
-  if (temp !== null) tasks.push(...temp);
+  localStorage.clear();
+  if (localStorage.length !== 0) {
+    let temp = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SAVED_TASKS));
 
-  tasksRender(tasks);
+    tasks.push(...temp);
+
+    tasksRender(tasks);
+  }
 })();
 
 //отслеживаем клик по кнопке добавить задачу
 dom.add.onclick = () => {
   const newTaskText = dom.new.value;
   if (newTaskText && isNotHaveTask(newTaskText, tasks)) {
-    addTask(newTaskText, tasks);
+    addTask(newTaskText, tasks, TASKS_IN_LS);
     dom.new.value = "";
     render(tasks);
-    saveInStorage(tasks);
+    saveInStorage(tasks, TASKS_IN_LS);
+    TASKS_IN_LS++;
   }
 };
 //функция добавления задачек
-function addTask(text, list) {
-  let positionNum = Number(localStorage.getItem("positioncount"));
+function addTask(text, list, listID) {
   const task = {
     date: Date.now(),
-    //timestamp: timestamp,
-    position: positionNum,
+    id: listID,
     text: text,
     isComplete: false,
   };
-
   list.push(task);
-  localStorage.setItem("positioncount", positionNum + 1);
 }
 //функция удаления задачи
 function deleteTask(id, list) {
   list.forEach((task, idx) => {
-    if (task.position === id) {
+    if (task.id === id) {
       list.splice(idx, 1);
-      console.log(idx);
     }
   });
 }
@@ -96,8 +93,8 @@ function tasksRender(list) {
     const cls = task.isComplete ? "todo_task todo_task_completed" : "todo_task";
     const checked = task.isComplete ? "checked" : "";
     const taskHtml = `
-    <div id ="${task.position}" class="${cls}">
-    <div class='todo_position'>${task.position}</div>
+    <div id ="${task.id}" class="${cls}">
+    <div class='todo_position'>${task.id}</div>
           <label class="todo_checkbox">
             <input type="checkbox" ${checked}/>
             <div class ='todo_checkbox-div'></div>
@@ -148,7 +145,7 @@ dom.data.onclick = () => {
 
 function changeTaskStatus(id, list) {
   list.forEach((task) => {
-    if (task.position === id) {
+    if (task.id === id) {
       task.isComplete = !task.isComplete;
     }
   });
@@ -164,9 +161,7 @@ function sortByPosition(tasks) {
   if (tasks.length <= 1) return; //защита от бесполезного вызова
   const newTasks = [...tasks];
   newTasks.sort(function (a, b) {
-    return sortState === SORT_STATE.UP
-      ? a.position - b.position
-      : b.position - a.position;
+    return sortState === SORT_STATE.UP ? a.id - b.id : b.id - a.id;
   });
   tasksRender(newTasks);
   sortState === SORT_STATE.UP
@@ -218,9 +213,9 @@ function dateFilter(tasks, { startDate, endDate }) {
   return tasks.filter((task) => task.date > startDate && task.date < endDate);
 }
 //сохранение в LocalStorage
-function saveInStorage(tasks) {
-  let serialTasks = JSON.stringify(tasks);
-  localStorage.setItem(LOCAL_STORAGE_KEYS.SAVED_TASKS, serialTasks);
+function saveInStorage(tasks, taskID) {
+  localStorage.setItem(LOCAL_STORAGE_KEYS.SAVED_TASKS, JSON.stringify(tasks));
+  localStorage.setItem(LOCAL_STORAGE_KEYS.TOTAL_TASKS_CREATED, taskID);
 }
 function saveFilteredText() {
   localStorage.setItem(LOCAL_STORAGE_KEYS.FILTERED_TEXT, dom.filter_text.value);
