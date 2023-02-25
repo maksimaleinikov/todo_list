@@ -31,12 +31,12 @@ const dom = {
 const tasks = [];
 
 (function startTasks() {
-  localStorage.clear();
+  //localStorage.clear();
   if (localStorage.length !== 0) {
     let temp = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SAVED_TASKS));
-
+    TASKS_IN_LS =
+      Number(localStorage.getItem(LOCAL_STORAGE_KEYS.TOTAL_TASKS_CREATED)) + 1;
     tasks.push(...temp);
-
     tasksRender(tasks);
   }
 })();
@@ -47,8 +47,8 @@ dom.add.onclick = () => {
   if (newTaskText && isNotHaveTask(newTaskText, tasks)) {
     addTask(newTaskText, tasks, TASKS_IN_LS);
     dom.new.value = "";
-    render(tasks);
     saveInStorage(tasks, TASKS_IN_LS);
+    render(tasks);
     TASKS_IN_LS++;
   }
 };
