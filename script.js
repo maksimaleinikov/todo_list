@@ -102,7 +102,9 @@ function tasksRender(list) {
           <div class ='todo_data'>${
             new Date(task.date).getDate() +
             "." +
-            (new Date(task.date).getMonth() + 1) +
+            (new Date(task.date).getMonth() + 1 > 10
+              ? new Date(task.date).getMonth() + 1
+              : "0" + (new Date(task.date).getMonth() + 1)) +
             "." +
             new Date(task.date).getFullYear()
           }</div>
