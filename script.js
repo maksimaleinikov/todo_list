@@ -8,6 +8,8 @@ const LOCAL_STORAGE_KEYS = {
   SAVED_TASKS: "savedTasks",
   FILTERED_TEXT: "filteredText",
   TOTAL_TASKS_CREATED: "totalTasksCreated",
+  START_DATE: "startDate",
+  END_DATE: "endDate",
 };
 
 let TASKS_IN_LS = 1;
@@ -36,10 +38,32 @@ const tasks = [];
     let temp = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SAVED_TASKS));
     TASKS_IN_LS =
       Number(localStorage.getItem(LOCAL_STORAGE_KEYS.TOTAL_TASKS_CREATED)) + 1;
+    if (localStorage.getItem("startDate") !== null) {
+      let startTimestamp = new Date(Number(localStorage.getItem("startDate")));
+      let endTimestamp = new Date(Number(localStorage.getItem("endDate")));
+      dom.start_date.value = formatDate(startTimestamp);
+      dom.end_date.value = formatDate(endTimestamp);
+    }
     tasks.push(...temp);
     tasksRender(tasks);
   }
 })();
+
+//функция для форматирования даты
+function formatDate(date) {
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let day = date.getDate();
+
+  let dateInFormat =
+    year +
+    "-" +
+    (Number(month + 1) > 10 ? Number(month + 1) : "0" + Number(month + 1)) +
+    "-" +
+    (Number(day) < 10 ? "0" + Number(day) : Number(day));
+
+  return dateInFormat;
+}
 
 //отслеживаем клик по кнопке добавить задачу
 dom.add.onclick = () => {
@@ -195,15 +219,13 @@ dom.filter_button.onclick = () => {
   if (filterText !== "") {
     newTasks = checkText(newTasks, filterText);
   }
-  if (startDate > endDate) {
-    let temp = startDate;
-    startDate = endDate;
-    endDate = temp;
-  }
 
   if (!isNaN(startDate) || !isNaN(endDate)) {
     newTasks = dateFilter(newTasks, { startDate, endDate });
   }
+  localStorage.setItem(LOCAL_STORAGE_KEYS.START_DATE, startDate);
+  localStorage.setItem(LOCAL_STORAGE_KEYS.END_DATE, endDate);
+
   tasksRender(newTasks);
 };
 //фильтрация по тексту задач
@@ -212,10 +234,16 @@ function checkText(tasks, text) {
 }
 //фильтрация по датам
 function dateFilter(tasks, { startDate, endDate }) {
+  if (!isNaN(startDate) && isNaN(endDate))
+    return tasks.filter((task) => task.date > startDate);
+
+  if (!isNaN(endDate) && isNaN(startDate))
+    return tasks.filter((task) => task.date < endDate);
+
   return tasks.filter((task) => task.date > startDate && task.date < endDate);
 }
 //сохранение в LocalStorage
-function saveInStorage(tasks, taskID) {
+function saveInStorage(tasks, taskID, startDate) {
   localStorage.setItem(LOCAL_STORAGE_KEYS.SAVED_TASKS, JSON.stringify(tasks));
   localStorage.setItem(LOCAL_STORAGE_KEYS.TOTAL_TASKS_CREATED, taskID);
 }
