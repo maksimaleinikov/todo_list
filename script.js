@@ -30,14 +30,16 @@ const dom = {
   refresh_button: document.querySelector("#refresh_button"),
 };
 //массив задач
-const tasks = [];
+let tasks = [];
 
 (function startTasks() {
-  //localStorage.clear();
+  localStorage.clear();
   if (localStorage.length !== 0) {
     let temp = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SAVED_TASKS));
-    TASKS_IN_LS =
-      Number(localStorage.getItem(LOCAL_STORAGE_KEYS.TOTAL_TASKS_CREATED)) + 1;
+    TASKS_IN_LS = Number(
+      localStorage.getItem(LOCAL_STORAGE_KEYS.TOTAL_TASKS_CREATED)
+    );
+    TASKS_IN_LS++;
     if (localStorage.getItem("startDate") !== null) {
       let startTimestamp = new Date(Number(localStorage.getItem("startDate")));
       let endTimestamp = new Date(Number(localStorage.getItem("endDate")));
@@ -69,7 +71,7 @@ function formatDate(date) {
 dom.add.onclick = () => {
   const newTaskText = dom.new.value;
   if (newTaskText && isNotHaveTask(newTaskText, tasks)) {
-    addTask(newTaskText, tasks, TASKS_IN_LS);
+    tasks = addTask(newTaskText, tasks, TASKS_IN_LS);
     dom.new.value = "";
     saveInStorage(tasks, TASKS_IN_LS);
     render(tasks);
@@ -78,17 +80,19 @@ dom.add.onclick = () => {
 };
 //функция добавления задачек
 function addTask(text, list, listID) {
-  const task = {
-    date: Date.now(),
-    id: listID,
-    text: text,
-    isComplete: false,
-  };
-  list.push(task);
+  return [
+    ...list,
+    {
+      date: Date.now(),
+      id: listID,
+      text: text,
+      isComplete: false,
+    },
+  ];
 }
 //функция удаления задачи
 function deleteTask(id, list) {
-  list.forEach((task, idx) => {
+  list.filter((task, idx) => {
     if (task.id === id) {
       list.splice(idx, 1);
     }
@@ -124,7 +128,9 @@ function tasksRender(list) {
             <div class ='todo_checkbox-div'></div>
           </label>
           <div class ='todo_data'>${
-            new Date(task.date).getDate() +
+            (new Date(task.date).getDate() + 1 > 10
+              ? new Date(task.date).getDate() + 1
+              : "0" + (new Date(task.date).getDate() + 1)) +
             "." +
             (new Date(task.date).getMonth() + 1 > 10
               ? new Date(task.date).getMonth() + 1
@@ -160,7 +166,7 @@ dom.tasks.onclick = (event) => {
 };
 //сортировка по клику на #
 dom.pos.onclick = () => {
-  sortByPosition(tasks);
+  sortTasks(tasks);
 };
 //сортировка по клику на дату
 dom.data.onclick = () => {
@@ -197,6 +203,7 @@ function sortByPosition(tasks) {
 //сортировка задач по дате
 function sortByData(tasks) {
   if (tasks.length <= 1) return;
+
   const newTasks = [...tasks];
   newTasks.sort(function (a, b) {
     return sortState === SORT_STATE.UP ? a.date - b.date : b.date - a.date;
@@ -206,6 +213,21 @@ function sortByData(tasks) {
     ? (sortState = SORT_STATE.DOWN)
     : (sortState = SORT_STATE.UP);
 }
+
+function sortTasks(tasks) {
+  const newTasks = [...tasks];
+
+  newTasks.sort(function (a, b) {
+    return sortState === SORT_STATE.UP
+      ? a.sortedBy - b.sortedBy
+      : b.sortedBy - a.sortedBy;
+  });
+  tasksRender(newTasks);
+  sortState === SORT_STATE.UP
+    ? (sortState = SORT_STATE.DOWN)
+    : (sortState = SORT_STATE.UP);
+}
+
 //функция фильтрации
 dom.filter_button.onclick = () => {
   const filterText = dom.filter_text.value;
