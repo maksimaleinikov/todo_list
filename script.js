@@ -92,11 +92,7 @@ function addTask(text, list, listID) {
 }
 //функция удаления задачи
 function deleteTask(id, list) {
-  list.filter((task, idx) => {
-    if (task.id === id) {
-      list.splice(idx, 1);
-    }
-  });
+  return list.filter((task, idx) => task.id !== id);
 }
 //проверка существования задачи в задачах
 function isNotHaveTask(text, list) {
@@ -151,35 +147,40 @@ dom.tasks.onclick = (event) => {
   const target = event.target;
   const isCheckboxEl = target.classList.contains("todo_checkbox-div");
   const isDeleteEl = target.classList.contains("todo_task-del");
+  let newTasks = [];
   if (isCheckboxEl) {
     const task = target.parentElement.parentElement;
     const taskId = Number(task.getAttribute("id"));
-    changeTaskStatus(taskId, tasks);
-    render(tasks);
+    newTasks = changeTaskStatus(taskId, tasks);
   }
   if (isDeleteEl) {
     const task = target.parentElement;
     const taskId = Number(task.getAttribute("id"));
-    deleteTask(taskId, tasks);
-    render(tasks);
+    newTasks = deleteTask(taskId, tasks);
   }
+  tasks = [...newTasks];
+  render(newTasks);
 };
 //сортировка по клику на #
 dom.pos.onclick = () => {
-  sortTasks(tasks);
+  handleSort("id");
 };
 //сортировка по клику на дату
 dom.data.onclick = () => {
-  sortByData(tasks);
+  handleSort("date");
 };
-
+//
+function handleSort(prop) {
+  const sortedTasks = sortTasksByProp(tasks, prop);
+  tasksRender(sortedTasks);
+}
 //функция изменения статуса задачи
 
 function changeTaskStatus(id, list) {
-  list.forEach((task) => {
-    if (task.id === id) {
-      task.isComplete = !task.isComplete;
-    }
+  return list.map((task) => {
+    return task.id === id
+      ? { ...task, isComplete: !task.isComplete }
+      : { ...task };
   });
 }
 
@@ -188,44 +189,19 @@ function renderTasksCount(list) {
   dom.count.innerHTML = list.length;
 }
 
-//сортировка задач по порядковому номеру
-function sortByPosition(tasks) {
-  if (tasks.length <= 1) return; //защита от бесполезного вызова
-  const newTasks = [...tasks];
-  newTasks.sort(function (a, b) {
-    return sortState === SORT_STATE.UP ? a.id - b.id : b.id - a.id;
-  });
-  tasksRender(newTasks);
-  sortState === SORT_STATE.UP
-    ? (sortState = SORT_STATE.DOWN)
-    : (sortState = SORT_STATE.UP);
-}
-//сортировка задач по дате
-function sortByData(tasks) {
-  if (tasks.length <= 1) return;
-
-  const newTasks = [...tasks];
-  newTasks.sort(function (a, b) {
-    return sortState === SORT_STATE.UP ? a.date - b.date : b.date - a.date;
-  });
-  tasksRender(newTasks);
-  sortState === SORT_STATE.UP
-    ? (sortState = SORT_STATE.DOWN)
-    : (sortState = SORT_STATE.UP);
-}
-
-function sortTasks(tasks) {
+//сортировка задач
+function sortTasksByProp(tasks, sortedBy) {
   const newTasks = [...tasks];
 
   newTasks.sort(function (a, b) {
     return sortState === SORT_STATE.UP
-      ? a.sortedBy - b.sortedBy
-      : b.sortedBy - a.sortedBy;
+      ? a[sortedBy] - b[sortedBy]
+      : b[sortedBy] - a[sortedBy];
   });
-  tasksRender(newTasks);
   sortState === SORT_STATE.UP
     ? (sortState = SORT_STATE.DOWN)
     : (sortState = SORT_STATE.UP);
+  return newTasks;
 }
 
 //функция фильтрации
